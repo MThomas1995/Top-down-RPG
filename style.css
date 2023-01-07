@@ -58,3 +58,8 @@ body {
 #coordinates-container p {
     margin: 0;
 }
+#toggle-grid {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
