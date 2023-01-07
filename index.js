@@ -17,9 +17,8 @@ canvas.style.top  = `${yPos}px`;
 canvas.width  = 1024;
 canvas.height = 576;
 
-let collectables = [];
-let boundaries   = [];
-let gridSquares  = [];
+const collectables = [];
+const boundaries   = [];
 
 const offset = {
     x: -735,
@@ -82,8 +81,6 @@ let setCollectables;
 let background;
 let foreground;
 let movables;
-let blockLayer;
-let showGrid = true;
 
 let level = 1;
 let levels = {
@@ -91,7 +88,6 @@ let levels = {
         init: () => {
             setCollision    = setCollisonMap(boundaries, L1Collisions);
             setCollectables = setCollectablesMap(collectables, L1Collectables);
-            setGridLayer    = setGridLayerMap(gridSquares, gridLayer);
             //  //  
             background = new Sprite({
                 position: {
@@ -108,7 +104,7 @@ let levels = {
                 },
                 image: L1FGImage
             });
-            movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
+            movables = [background, ...boundaries, foreground, ...collectables];
         }
     },
     2: {
@@ -131,38 +127,14 @@ let levels = {
                 },
                 image: L2FGImage 
             });
-            movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
-        }
-    },
-    3: {
-        init: () => {
-            setCollision    = setCollisonMap(boundaries,L2Collisions);
-            setCollectables = setCollectablesMap(collectables, L2Collectables);
-            //  //  
-            background = new Sprite({
-                position: {
-                    x: offset.x,
-                    y: offset.y
-                },
-                image: L1Image
-            });
-            //  //
-            foreground = new Sprite({
-                position: {
-                    x: offset.x,
-                    y: offset.y
-                },
-                image: L1FGImage 
-            });
-            movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
+            movables = [background, ...boundaries, foreground, ...collectables];
         }
     }
 };
 
 const setCollisonMap = (boundaries, collisions) => {
 
-    let collisionsMap = [];
-
+    const collisionsMap = [];
     for(let i = 0; i < collisions.length; i += 70) {
         collisionsMap.push(collisions.slice(i, 70 + i));
     }
@@ -185,7 +157,7 @@ const setCollisonMap = (boundaries, collisions) => {
 
 const setCollectablesMap = (collectables, collectableSquares) => {
     
-    let collectableMap = [];
+    const collectableMap = [];
 
     for(let i = 0; i < collectableSquares.length; i += 70) {
         collectableMap.push(collectableSquares.slice(i, 70 + i));
@@ -207,31 +179,7 @@ const setCollectablesMap = (collectables, collectableSquares) => {
         });
     });
 }
-
-const setGridLayerMap = (gridSquares, gridLayer) => {
-
-    let gridLayerMap = [];
-
-    console.log(showGrid);
-
-    for(let i = 0; i < gridLayer.length; i += 70) {
-        gridLayerMap.push(gridLayer.slice(i, 70 + i));
-    }
-
-    gridLayerMap.forEach((row, i) => {
-        row.forEach((square, j) => {
-            gridSquares.push(
-                new GridLayer({
-                    position: {
-                        x: j * GridLayer.width + offset.x,
-                        y: i * GridLayer.height + offset.y
-                    },
-                    showGrid: showGrid
-                })
-            )
-        });
-    });
-}
+// setCollectablesMap(collectables);
 
 const projectiles    = [];
 const collectedItems = [];
@@ -266,12 +214,6 @@ const animate = () => {
 
     foreground.draw();
 
-    gridSquares.forEach((gridSquare) => {
-        if(showGrid) {
-            gridSquare.draw();
-        }
-    });
-
     let moving = true;
     player.moving = false;
 
@@ -295,7 +237,7 @@ const animate = () => {
                 retangularCollision({
                     rectangle1: player,
                     rectangle2: {...boundary, position: {
-                        x: boundary.position.x + 4,
+                        x: boundary.position.x + 3,
                         y: boundary.position.y
                     }}
                 })
@@ -321,9 +263,9 @@ const animate = () => {
             }
         }       
         if(moving) {
-            playerMapPos.x -= 4;
+            playerMapPos.x -= 3;
             movables.forEach((movable) => {
-                movable.position.x += 4;
+                movable.position.x += 3;
             });
             updateCoordinates(playerMapPos);
         }
@@ -337,7 +279,7 @@ const animate = () => {
                     rectangle1: player,
                     rectangle2: {...boundary, position: {
                         x: boundary.position.x,
-                        y: boundary.position.y + 4
+                        y: boundary.position.y + 3
                     }}
                 })
             ) {
@@ -362,9 +304,9 @@ const animate = () => {
             }
         }
         if(moving) {
-            playerMapPos.y -= 4;
+            playerMapPos.y -= 3;
             movables.forEach((movable) => {
-                movable.position.y += 4;
+                movable.position.y += 3;
             });
             updateCoordinates(playerMapPos);
         }
@@ -377,7 +319,7 @@ const animate = () => {
                 retangularCollision({
                     rectangle1: player,
                     rectangle2: {...boundary, position: {
-                        x: boundary.position.x - 4,
+                        x: boundary.position.x - 3,
                         y: boundary.position.y
                     }}
                 })
@@ -403,9 +345,9 @@ const animate = () => {
             }
         }
         if(moving) {
-            playerMapPos.x += 4;
+            playerMapPos.x += 3;
             movables.forEach((movable) => {
-                movable.position.x -= 4;
+                movable.position.x -= 3;
             });
             updateCoordinates(playerMapPos);
         }
@@ -419,7 +361,7 @@ const animate = () => {
                     rectangle1: player,
                     rectangle2: {...boundary, position: {
                         x: boundary.position.x,
-                        y: boundary.position.y - 4
+                        y: boundary.position.y - 3
                     }}
                 })
             ) {
@@ -444,14 +386,14 @@ const animate = () => {
             }
         }
         if(moving) {
-            playerMapPos.y += 4;
+            playerMapPos.y += 3;
             movables.forEach((movable) => {
-                movable.position.y -= 4;
+                movable.position.y -= 3;
             });
             updateCoordinates(playerMapPos);
         }
     }
-}   
+}
 levels[1].init();
 animate();
 
@@ -509,10 +451,6 @@ const toggleInventory = () => {
 const updateCoordinates = (playerMapPos) => {
     let xCooContainer = document.querySelector('#coordinates-container #x-pos');
     let yCooContainer = document.querySelector('#coordinates-container #y-pos');
-    xCooContainer.innerHTML = `X: ${playerMapPos.x / 48}`;
-    yCooContainer.innerHTML = `Y: ${playerMapPos.y / 48}`;
-}
-
-const toggleGridLayer = () => {
-    showGrid = !showGrid;
+    xCooContainer.innerHTML = `X: ${playerMapPos.x}`;
+    yCooContainer.innerHTML = `Y: ${playerMapPos.y}`;
 }
