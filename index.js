@@ -133,6 +133,29 @@ let levels = {
             });
             movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
         }
+    },
+    3: {
+        init: () => {
+            setCollision    = setCollisonMap(boundaries,L2Collisions);
+            setCollectables = setCollectablesMap(collectables, L2Collectables);
+            //  //  
+            background = new Sprite({
+                position: {
+                    x: offset.x,
+                    y: offset.y
+                },
+                image: L2Image
+            });
+            //  //
+            foreground = new Sprite({
+                position: {
+                    x: offset.x,
+                    y: offset.y
+                },
+                image: L2FGImage 
+            });
+            movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
+        }
     }
 };
 
