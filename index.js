@@ -144,7 +144,7 @@ let levels = {
                     x: offset.x,
                     y: offset.y
                 },
-                image: L2Image
+                image: L1Image
             });
             //  //
             foreground = new Sprite({
@@ -152,7 +152,7 @@ let levels = {
                     x: offset.x,
                     y: offset.y
                 },
-                image: L2FGImage 
+                image: L1FGImage 
             });
             movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
         }
