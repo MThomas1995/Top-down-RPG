@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>JS Canvas Game - Tiled</title>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="canvas"></canvas>
+        <div id="money-count">£ <span>0</span></div>
+        <div id="inventory">
+            <div id="collectables-container">
+                <h3>Collectables</h3>
+                <div id="collectables"></div>
+            </div>
+            <button onclick="toggleInventory()">Inventory</button>
+        </div>
+        <div id="coordinates-container">
+            <p id="x-pos"></p>
+            <p id="y-pos"></p>
+        </div>
+    </div>
+    <script src="collisions.js"></script>
+    <script src="collectables.js"></script>
+    <script src="classes.js"></script>
+    <script src="actions.js"></script>
+    <script src="index.js"></script>
+    <!-- <script src="index-test.js"></script> -->
+</body>
+</html>
