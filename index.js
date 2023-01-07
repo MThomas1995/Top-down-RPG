@@ -486,8 +486,8 @@ const toggleInventory = () => {
 const updateCoordinates = (playerMapPos) => {
     let xCooContainer = document.querySelector('#coordinates-container #x-pos');
     let yCooContainer = document.querySelector('#coordinates-container #y-pos');
-    xCooContainer.innerHTML = `X: ${playerMapPos.x / 48}`;
-    yCooContainer.innerHTML = `Y: ${playerMapPos.y / 48}`;
+    xCooContainer.innerHTML = `X: ${parseInt(playerMapPos.x / 48)}`;
+    yCooContainer.innerHTML = `Y: ${parseInt(playerMapPos.y / 48)}`;
 }
 
 const toggleGridLayer = () => {
