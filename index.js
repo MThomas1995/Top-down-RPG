@@ -84,6 +84,7 @@ let foreground;
 let movables;
 let blockLayer;
 let showGrid = true;
+let showBoundary = true;
 
 let level = 1;
 let levels = {
@@ -152,7 +153,8 @@ const setCollisonMap = (boundaries, collisions) => {
                     position: {
                         x: j * Boundary.width + offset.x,
                         y: i * Boundary.height + offset.y
-                    }
+                    },
+                    showBoundary: showBoundary
                 })
             );
         });
@@ -188,8 +190,6 @@ const setCollectablesMap = (collectables, collectableSquares) => {
 const setGridLayerMap = (gridSquares, gridLayer) => {
 
     let gridLayerMap = [];
-
-    console.log(showGrid);
 
     for(let i = 0; i < gridLayer.length; i += 70) {
         gridLayerMap.push(gridLayer.slice(i, 70 + i));
@@ -228,7 +228,9 @@ const animate = () => {
     window.requestAnimationFrame(animate);
     background.draw();
     boundaries.forEach((boundary) => {
-        boundary.draw();
+        if(showBoundary) {
+            boundary.draw();
+        }
     });
 
     collectables.forEach((collectable) => {
@@ -492,4 +494,7 @@ const updateCoordinates = (playerMapPos) => {
 
 const toggleGridLayer = () => {
     showGrid = !showGrid;
+}
+const toggleBoundaryLayer = () => {
+    showBoundary = !showBoundary;
 }
