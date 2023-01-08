@@ -21,10 +21,7 @@ let collectables = [];
 let boundaries   = [];
 let gridSquares  = [];
 
-const offset = {
-    x: -735,
-    y: -650
-}
+
 // End - Game Container Setup //
 
 // Image imports //
@@ -55,45 +52,31 @@ const offset = {
     playerRightImage.src = './media/img/playerRight.png';
 // End - Image imports //
 
-const player = new Sprite({
-    position: {
-        x: canvas.width / 2 - 192 / 4 / 2,
-        y: canvas.height / 2 - 68 / 2
-    },
-    image: playerDownImage,
-    frames: {
-        max: 4
-    },
-    sprites: {
-        up: playerUpImage,
-        down: playerDownImage,
-        left: playerLeftImage,
-        right: playerRightImage
-    }
-});
-
-let playerMapPos = {
-    x: player.position.x - offset.x,
-    y: player.position.y - offset.y
-}
-
 let setCollision;
 let setCollectables;
 let background;
 let foreground;
 let movables;
 let blockLayer;
-let showGrid = true;
+let player;
+let playerMapPos;
+let offset;
+let showGrid     = true;
 let showBoundary = true;
 
-let level = 1;
 let levels = {
     1: {
         init: () => {
+            // Set Map offset //
+            offset = {
+                x: -735,
+                y: -650
+            }
+            // Set Block Layers //
             setCollision    = setCollisonMap(boundaries, L1Collisions);
             setCollectables = setCollectablesMap(collectables, L1Collectables);
             setGridLayer    = setGridLayerMap(gridSquares, gridLayer);
-            //  //  
+            // Set Background //  
             background = new Sprite({
                 position: {
                     x: offset.x,
@@ -101,7 +84,7 @@ let levels = {
                 },
                 image: L1Image
             });
-            //  //
+            // Set Foreground //
             foreground = new Sprite({
                 position: {
                     x: offset.x,
@@ -109,14 +92,43 @@ let levels = {
                 },
                 image: L1FGImage
             });
+            // Set Player //
+            player = new Sprite({
+                position: {
+                    x: (canvas.width / 2) - ((192 / 4) / 2),
+                    y: (canvas.height / 2) - (68 / 2)
+                },
+                image: playerDownImage,
+                frames: {
+                    max: 4
+                },
+                sprites: {
+                    up: playerUpImage,
+                    down: playerDownImage,
+                    left: playerLeftImage,
+                    right: playerRightImage
+                }
+            });
+            // Set Player - Map Coords //
+            playerMapPos = {
+                x: player.position.x - offset.x,
+                y: player.position.y - offset.y
+            }
             movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
         }
     },
     2: {
         init: () => {
+            // Set Map offset //
+            offset = {
+                x: -50,
+                y: -700
+            }
+            // Set Block Layers //
             setCollision    = setCollisonMap(boundaries,L2Collisions);
             setCollectables = setCollectablesMap(collectables, L2Collectables);
-            //  //  
+            setGridLayer    = setGridLayerMap(gridSquares, gridLayer);
+            // Set Background //  
             background = new Sprite({
                 position: {
                     x: offset.x,
@@ -124,7 +136,7 @@ let levels = {
                 },
                 image: L2Image
             });
-            //  //
+            // Set Foreground //
             foreground = new Sprite({
                 position: {
                     x: offset.x,
@@ -132,6 +144,28 @@ let levels = {
                 },
                 image: L2FGImage 
             });
+            // Set Player //
+            player = new Sprite({
+                position: {
+                    x: (canvas.width / 2) - ((192 / 4) / 2),
+                    y: (canvas.height / 2) - (68 / 2)
+                },
+                image: playerRightImage,
+                frames: {
+                    max: 4
+                },
+                sprites: {
+                    up: playerUpImage,
+                    down: playerDownImage,
+                    left: playerLeftImage,
+                    right: playerRightImage
+                }
+            });
+            // Set Player - Map Coords //
+            playerMapPos = {
+                x: player.position.x - offset.x,
+                y: player.position.y - offset.y
+            }
             movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
         }
     }
@@ -160,7 +194,6 @@ const setCollisonMap = (boundaries, collisions) => {
         });
     });
 }
-// setCollisonMap(boundaries);
 
 const setCollectablesMap = (collectables, collectableSquares) => {
     
@@ -220,7 +253,7 @@ const retangularCollision = ({rectangle1, rectangle2}) => {
         rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
         rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&
         rectangle1.position.y + rectangle1.height >= rectangle2.position.y
-    ); 
+    );
 }
 
 // Game Animation Loop
@@ -250,6 +283,8 @@ const animate = () => {
             gridSquare.draw();
         }
     });
+
+
 
     let moving = true;
     player.moving = false;
@@ -431,7 +466,7 @@ const animate = () => {
         }
     }
 }   
-levels[1].init();
+levels[2].init();
 animate();
 
 // Collectables Check for duplicates / type
