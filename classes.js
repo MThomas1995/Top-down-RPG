@@ -63,8 +63,9 @@ class Projectile {
 class Boundary {
     static width  = 48;
     static height = 48;
-    constructor({position}) {
+    constructor({position, showBoundary}) {
         this.position = position;
+        this.showBoundary = showBoundary;
         this.width    = 48;
         this.height   = 48;
     }

@@ -58,8 +58,10 @@ body {
 #coordinates-container p {
     margin: 0;
 }
-#toggle-grid {
+#config-container {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     bottom: 0;
     right: 0;
 }
