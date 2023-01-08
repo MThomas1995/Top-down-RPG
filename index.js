@@ -249,9 +249,9 @@ const collectedItems = [];
 // Check for collision on all axis
 const retangularCollision = ({rectangle1, rectangle2}) => {
     return (
-        rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
-        rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
-        rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&
+        rectangle1.position.x + (rectangle1.width / 6 * 5) >= rectangle2.position.x &&
+        rectangle1.position.x + (rectangle1.width / 6) <= rectangle2.position.x + rectangle2.width &&
+        rectangle1.position.y <= rectangle2.position.y + (rectangle2.height - (rectangle1.height / 2)) &&
         rectangle1.position.y + rectangle1.height >= rectangle2.position.y
     );
 }
@@ -466,7 +466,7 @@ const animate = () => {
         }
     }
 }   
-levels[2].init();
+levels[1].init();
 animate();
 
 // Collectables Check for duplicates / type
