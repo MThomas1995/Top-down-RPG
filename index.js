@@ -59,8 +59,16 @@ let foreground;
 let movables;
 let blockLayer;
 let player;
-let playerMapPos;
+let playerPixelPos;
+let playerTilePos;
 let offset;
+let directions = {
+    left:  {x: -4, y: 0, key: 'left'},
+    right: {x: 4, y: 0, key: 'right'},
+    up:    {x: 0, y: -4, key: 'up'},
+    down:  {x: 0, y: 4, key: 'down'}
+}
+let collisionsMap = [];
 let showGrid     = true;
 let showBoundary = true;
 
@@ -69,8 +77,8 @@ let levels = {
         init: () => {
             // Set Map offset //
             offset = {
-                x: -735,
-                y: -650
+                x: -720,
+                y: -640
             }
             // Set Block Layers //
             setCollision    = setCollisonMap(boundaries, L1Collisions);
@@ -110,9 +118,13 @@ let levels = {
                 }
             });
             // Set Player - Map Coords //
-            playerMapPos = {
+            playerPixelPos = {
                 x: player.position.x - offset.x,
                 y: player.position.y - offset.y
+            }
+            playerTilePos = {
+                x: Math.floor((player.position.x - offset.x) / 48),
+                y: Math.floor((player.position.y - offset.y) / 48)
             }
             movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
         }
@@ -162,9 +174,9 @@ let levels = {
                 }
             });
             // Set Player - Map Coords //
-            playerMapPos = {
-                x: player.position.x - offset.x,
-                y: player.position.y - offset.y
+            playerPixelPos = {
+                x: Math.floor((player.position.x - offset.x) / 48),
+                y: Math.floor((player.position.y - offset.y) / 48)
             }
             movables = [background, ...boundaries, foreground, ...collectables, ...gridSquares];
         }
@@ -173,7 +185,7 @@ let levels = {
 
 const setCollisonMap = (boundaries, collisions) => {
 
-    let collisionsMap = [];
+    collisionsMap = [];
 
     for(let i = 0; i < collisions.length; i += 70) {
         collisionsMap.push(collisions.slice(i, 70 + i));
@@ -284,38 +296,43 @@ const animate = () => {
         }
     });
 
-
-
-    let moving = true;
-    player.moving = false;
+    let moving      = true;
+    let currentMove = false;
+    player.moving   = false;
 
     if(keys.left.pressed) {
+        currentMove = directions.left;
         player.moving = true;
-        player.image = player.sprites.left;
+    }
+    if(keys.right.pressed) {
+        currentMove = directions.right;
+        player.moving = true;
+    }
+    if(keys.up.pressed) {
+        currentMove = directions.up;
+        player.moving = true;
+    }
+    if(keys.down.pressed) {
+        currentMove = directions.down;
+        player.moving = true;
+    }
+    
+
+    if(player.moving) {
+        player.image = player.sprites[currentMove.key];
         for(let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i];
-            // index = (y * width) + x
-            // let index = (offset.y * mapWidth);            
-            // console.log('mapWidth', mapWidth);
-            // console.log('offset x', offset.x);
-            // console.log('map position: ', );
-            // console.log('playerPosition', player.position);
-            // console.log('offset', mapWidth + offset.x);
-            // console.log('index', index);
-            // console.log(boundaries);
-            // console.log(boundaries.indexOf(boundary));
-            
             if(
                 retangularCollision({
                     rectangle1: player,
                     rectangle2: {...boundary, position: {
-                        x: boundary.position.x + 4,
-                        y: boundary.position.y
+                        x: boundary.position.x + currentMove.x,
+                        y: boundary.position.y + currentMove.y
                     }}
                 })
             ) {
-                console.log('Boundary Hit!');
-                moving = false;
+                console.log('Boundary Hit!');   
+                // moving = false;
                 break;
             }
         }
@@ -335,134 +352,31 @@ const animate = () => {
             }
         }       
         if(moving) {
-            playerMapPos.x -= 4;
-            movables.forEach((movable) => {
-                movable.position.x += 4;
-            });
-            updateCoordinates(playerMapPos);
-        }
-    } else if(keys.up.pressed){
-        player.moving = true;
-        player.image = player.sprites.up;
-        for(let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i];
-            if(
-                retangularCollision({
-                    rectangle1: player,
-                    rectangle2: {...boundary, position: {
-                        x: boundary.position.x,
-                        y: boundary.position.y + 4
-                    }}
-                })
-            ) {
-                console.log('Boundary Hit!');
-                moving = false;
-                break;
+
+            playerTilePos = {
+                x: playerPixelPos.x / 48,
+                y: playerPixelPos.y / 48
             }
-        }
-        for(let i = 0; i < collectables.length; i++) {
-            const collectable = collectables[i];
-            if(
-                retangularCollision({
-                    rectangle1: player,
-                    rectangle2: {...collectable, position: {
-                        x: collectable.position.x,
-                        y: collectable.position.y
-                    }}
-                })
-            ) {
-                itemCheck(collectable);
-                break;
+
+            let newPlayerPixelPos = {...playerPixelPos};
+            newPlayerPixelPos.x += currentMove.x;
+            newPlayerPixelPos.y += currentMove.y;
+            let newPlayerTilePos  = {
+                x: newPlayerPixelPos.x / 48,
+                y: newPlayerPixelPos.y / 48
+            };
+            let moveValid = validateMove(newPlayerTilePos, currentMove.key);
+            
+            if(moveValid) {
+                playerTilePos = {...newPlayerTilePos};
+                playerPixelPos = {...newPlayerPixelPos};
+
+                movables.forEach((movable) => {
+                    movable.position.x -= currentMove.x;
+                    movable.position.y -= currentMove.y;
+                });
+                updateCoordinates(playerPixelPos);
             }
-        }
-        if(moving) {
-            playerMapPos.y -= 4;
-            movables.forEach((movable) => {
-                movable.position.y += 4;
-            });
-            updateCoordinates(playerMapPos);
-        }
-    } else if(keys.right.pressed) {
-        player.moving = true;
-        player.image = player.sprites.right;
-        for(let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i];
-            if(
-                retangularCollision({
-                    rectangle1: player,
-                    rectangle2: {...boundary, position: {
-                        x: boundary.position.x - 4,
-                        y: boundary.position.y
-                    }}
-                })
-            ) {
-                console.log('Boundary Hit!');
-                moving = false;
-                break;
-            }
-        }
-        for(let i = 0; i < collectables.length; i++) {
-            const collectable = collectables[i];
-            if(
-                retangularCollision({
-                    rectangle1: player,
-                    rectangle2: {...collectable, position: {
-                        x: collectable.position.x,
-                        y: collectable.position.y
-                    }}
-                })
-            ) {
-                itemCheck(collectable);
-                break;
-            }
-        }
-        if(moving) {
-            playerMapPos.x += 4;
-            movables.forEach((movable) => {
-                movable.position.x -= 4;
-            });
-            updateCoordinates(playerMapPos);
-        }
-    } else if(keys.down.pressed) {
-        player.moving = true;
-        player.image = player.sprites.down;
-        for(let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries[i];
-            if(
-                retangularCollision({
-                    rectangle1: player,
-                    rectangle2: {...boundary, position: {
-                        x: boundary.position.x,
-                        y: boundary.position.y - 4
-                    }}
-                })
-            ) {
-                console.log('Boundary Hit!');
-                moving = false;
-                break;
-            }
-        }
-        for(let i = 0; i < collectables.length; i++) {
-            const collectable = collectables[i];
-            if(
-                retangularCollision({
-                    rectangle1: player,
-                    rectangle2: {...collectable, position: {
-                        x: collectable.position.x,
-                        y: collectable.position.y
-                    }}
-                })
-            ) {
-                itemCheck(collectable);
-                break;
-            }
-        }
-        if(moving) {
-            playerMapPos.y += 4;
-            movables.forEach((movable) => {
-                movable.position.y -= 4;
-            });
-            updateCoordinates(playerMapPos);
         }
     }
 }   
@@ -520,11 +434,11 @@ const toggleInventory = () => {
     }
 }
 
-const updateCoordinates = (playerMapPos) => {
+const updateCoordinates = (playerPixelPos) => {
     let xCooContainer = document.querySelector('#coordinates-container #x-pos');
     let yCooContainer = document.querySelector('#coordinates-container #y-pos');
-    xCooContainer.innerHTML = `X: ${parseInt(playerMapPos.x / 48)}`;
-    yCooContainer.innerHTML = `Y: ${parseInt(playerMapPos.y / 48)}`;
+    xCooContainer.innerHTML = `X: ${Math.floor(playerTilePos.x)}`;
+    yCooContainer.innerHTML = `Y: ${Math.floor(playerTilePos.y)}`;
 }
 
 const toggleGridLayer = () => {
@@ -532,4 +446,22 @@ const toggleGridLayer = () => {
 }
 const toggleBoundaryLayer = () => {
     showBoundary = !showBoundary;
+}
+
+const validateMove = (position, key) => {
+    // position.y += .5;
+    // position.x -= .5;
+    if(key === 'right') {
+        position.x = Math.ceil(position.x);
+    } else if(key === 'left') {
+        position.x = Math.floor(position.x);
+    }
+    if(key === 'up') {
+        position.y = Math.floor(position.y);
+    } else if(key === 'down') {
+        position.y = Math.ceil(position.y + .3);
+    }
+    console.log(position);
+    let collidedBoundary = collisionsMap[parseInt(position.y)][parseInt(position.x)];
+    return collidedBoundary === 0;
 }
