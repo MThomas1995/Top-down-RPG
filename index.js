@@ -452,14 +452,14 @@ const validateMove = (position, key) => {
     // position.y += .5;
     // position.x -= .5;
     if(key === 'right') {
-        position.x = Math.ceil(position.x);
+        position.x = Math.floor(position.x + 1);
     } else if(key === 'left') {
         position.x = Math.floor(position.x);
     }
     if(key === 'up') {
         position.y = Math.floor(position.y);
     } else if(key === 'down') {
-        position.y = Math.ceil(position.y + .3);
+        position.y = Math.floor(position.y + 1);
     }
     console.log(position);
     let collidedBoundary = collisionsMap[parseInt(position.y)][parseInt(position.x)];
