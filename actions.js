@@ -37,11 +37,21 @@ window.addEventListener('keydown', (e) => {
             keys.down.pressed = true;
             lastKey = 'ArrowDown';
             break;
-        case ' ': 
-            keys.space.pressed = true;
-            lastKey = ' ';
-            console.log(gridSquares);
-            break;
+        // case ' ': 
+        //     keys.space.pressed = true;
+        //     lastKey = ' ';
+        //     projectiles.push(new Projectile({
+        //         position: {
+        //             x: player.position.x,
+        //             y: player.position.y
+        //         },
+        //         velocity: {
+        //             x: 0, 
+        //             y: -3
+        //             }
+        //         }
+        //     ));
+        //     break;
         }
 });
 
